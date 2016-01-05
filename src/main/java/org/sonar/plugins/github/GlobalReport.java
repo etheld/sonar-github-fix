@@ -20,6 +20,7 @@
 package org.sonar.plugins.github;
 
 import javax.annotation.Nullable;
+
 import org.kohsuke.github.GHCommitState;
 import org.sonar.api.issue.Issue;
 import org.sonar.api.rule.Severity;
@@ -52,7 +53,7 @@ public class GlobalReport {
   }
 
   public GHCommitState getStatus() {
-    return (newIssues(Severity.BLOCKER) > 0 || newIssues(Severity.CRITICAL) > 0) ? GHCommitState.ERROR : GHCommitState.SUCCESS;
+    return newIssues(Severity.BLOCKER) > 0 || newIssues(Severity.CRITICAL) > 0 ? GHCommitState.ERROR : GHCommitState.SUCCESS;
   }
 
   private int newIssues(String s) {
@@ -60,15 +61,15 @@ public class GlobalReport {
   }
 
   private void printNewIssuesMarkdown(StringBuilder sb) {
-    sb.append("SonarQube analysis reported ");
+        sb.append("SonarQube analysis reported (issues that weren't caused by your commit, but worth take a look)");
     int newIssues = newIssues(Severity.BLOCKER) + newIssues(Severity.CRITICAL) + newIssues(Severity.MAJOR) + newIssues(Severity.MINOR) + newIssues(Severity.INFO);
     if (newIssues > 0) {
       sb.append(newIssues).append(" issue" + (newIssues > 1 ? "s" : "")).append(":\n");
       printNewIssuesForMarkdown(sb, Severity.BLOCKER);
       printNewIssuesForMarkdown(sb, Severity.CRITICAL);
       printNewIssuesForMarkdown(sb, Severity.MAJOR);
-      printNewIssuesForMarkdown(sb, Severity.MINOR);
-      printNewIssuesForMarkdown(sb, Severity.INFO);
+//      printNewIssuesForMarkdown(sb, Severity.MINOR);
+//      printNewIssuesForMarkdown(sb, Severity.INFO);
     } else {
       sb.append("no issues.");
     }
